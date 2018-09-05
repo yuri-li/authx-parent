@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: account
+
+security:
+  oauth2:
+    client:
+      clientId: account
+      clientSecret: 123456
+      grantType: client_credentials
+#      accessTokenUri: http://localhost:8082/authx-server/oauth/token
+#      userAuthorizationUri: http://localhost:8082/authx-server/oauth/authorize
+    resource:
+      userInfoUri: http://localhost:8082/authx-server/userInfo
+
+server:
+  port: 8083
+  servlet:
+    contextPath: /account

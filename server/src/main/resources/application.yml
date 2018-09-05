@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: authx-server
+
+server:
+  port: 8082
+  servlet:
+    contextPath: /authx-server
