@@ -27,6 +27,10 @@ allprojects {
         mavenLocal()
         mavenCentral()
     }
+    tasks.withType<Wrapper> {
+        gradleVersion = "4.10"
+        distributionType = Wrapper.DistributionType.ALL
+    }
 }
 subprojects {
     tasks.withType<KotlinCompile> {
@@ -37,10 +41,6 @@ subprojects {
     }
     tasks.withType<Test> {
         useJUnitPlatform()
-    }
-    tasks.withType<Wrapper> {
-        gradleVersion = "4.10"
-        distributionType = Wrapper.DistributionType.ALL
     }
 }
 dependencies {
