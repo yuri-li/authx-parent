@@ -30,8 +30,8 @@ class JsonConfig(val instantFormatter: InstantFormatter) {
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     @Primary
     fun serializingObjectMapper(): ObjectMapper {
-        val formatter = DateTimeFormatter.ofPattern(instantFormatter.pattern)
-        val zoneId = ZoneId.of(instantFormatter.zoneId)
+        val formatter = DateTimeFormatter.ofPattern(instantFormatter.dateFormat)
+        val zoneId = ZoneId.of(instantFormatter.timeZone)
 
         val objectMapper = ObjectMapper()
         val javaTimeModule = JavaTimeModule()
@@ -47,8 +47,8 @@ class JsonConfig(val instantFormatter: InstantFormatter) {
     }
 }
 @Component
-@ConfigurationProperties("jackson.instant")
-class InstantFormatter(
-        var pattern: String = "yyyy-MM-dd HH:mm:ss",
-        var zoneId: String = "+08:00"
-)
+@ConfigurationProperties("spring.jackson")
+class InstantFormatter{
+    lateinit var dateFormat:String
+    lateinit var timeZone: String
+}

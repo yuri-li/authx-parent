@@ -15,11 +15,14 @@ class CustomController(val oauthClient: OauthClient, val clientCredentialsResour
     val log = LogFactory.getLog(this.javaClass)
 
     @RequestMapping(value = ["/customers"], method = [RequestMethod.GET])
-    fun findAllByGet(@ApiIgnore authentication: CurrentUser): CurrentUser = authentication
+    fun find(@ApiIgnore authentication: CurrentUser, @ApiIgnore @RequestParam(defaultValue="USER") role:String ): CurrentUser {
+        log.info("fetch authentication & role. role = ${role}")
+        return authentication
+    }
 
     @RequestMapping(value = ["/login"], method = [RequestMethod.POST])
     fun login(@Valid @RequestBody model: CustomUser.Login): OAuth2AccessToken {
-        log.info(model)
+        log.info("2. login params:${model}")
         return oauthClient.oauthToken(mapOf(
                 "username" to model.username,
                 "password" to model.password,

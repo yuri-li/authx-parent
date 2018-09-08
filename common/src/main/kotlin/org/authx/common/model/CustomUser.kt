@@ -3,6 +3,7 @@ package org.authx.common.model
 import org.authx.common.util.RegexUtil
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import java.time.Instant
 import javax.validation.constraints.Pattern
 
 
@@ -51,5 +52,6 @@ data class CurrentUser(
         val isAccountNonExpired: Boolean = true, //账号没有过期
         val isAccountNonLocked: Boolean = true,//账号没有被锁定
         val email: String,
-        val realm: String
+        val realm: String,
+        val date: Instant = Instant.now()
 )
