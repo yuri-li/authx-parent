@@ -1,6 +1,7 @@
 pluginManagement {
     repositories {
         mavenLocal()
+        maven(url = "https://repo.spring.io/plugins-snapshot")
         gradlePluginPortal()
         mavenCentral()
     }

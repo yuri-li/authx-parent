@@ -1,6 +1,7 @@
 package org.authx.account.controller
 
 import org.apache.commons.logging.LogFactory
+import org.authx.account.service.UserServiceI
 import org.authx.common.model.CurrentUser
 import org.authx.common.model.CustomUser
 import org.springframework.cloud.openfeign.FeignClient
@@ -11,12 +12,12 @@ import springfox.documentation.annotations.ApiIgnore
 import javax.validation.Valid
 
 @RestController
-class CustomController(val oauthClient: OauthClient, val clientCredentialsResourceDetails: ClientCredentialsResourceDetails) {
+class CustomController(val oauthClient: OauthClient, val clientCredentialsResourceDetails: ClientCredentialsResourceDetails, val service: UserServiceI) {
     val log = LogFactory.getLog(this.javaClass)
 
     @RequestMapping(value = ["/customers"], method = [RequestMethod.GET])
-    fun find(@ApiIgnore authentication: CurrentUser, @ApiIgnore @RequestParam(defaultValue="USER") role:String ): CurrentUser {
-        log.info("fetch authentication & role. role = ${role}")
+    fun find(@ApiIgnore authentication: CurrentUser): CurrentUser {
+        log.info("-----------${service.getRole()}")
         return authentication
     }
 

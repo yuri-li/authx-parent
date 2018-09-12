@@ -26,7 +26,7 @@ typora-root-url: images
 
 建议：只在parent中编写build.gradle.kts
 
-> 也可以编写代码。但是，按照习惯（maven的习惯，虽然换了gradle，但，没有必要，不用改习惯），删除目录`src`
+> 也可以编写代码。但是，按照maven的习惯，虽然换了gradle，但，没有必要改变习惯。所以，建议：删除目录`src`
 
 ## 2.1 plugins
 

@@ -1,6 +1,8 @@
 package org.authx.account
 
+import org.authx.account.config.SpringContextHolder
 import org.authx.account.controller.OauthClient
+import org.authx.account.service.UserServiceI
 import org.authx.common.model.CurrentUser
 import org.authx.common.util.Extensions.openUrl
 import org.springframework.boot.SpringApplication
@@ -37,9 +39,14 @@ class AccountConfig {
             argumentResolvers.add(object : HandlerMethodArgumentResolver {
                 override fun supportsParameter(parameter: MethodParameter): Boolean = (CurrentUser::class.java == parameter.parameterType)
 
-                override fun resolveArgument(parameter: MethodParameter, mavContainer: ModelAndViewContainer?, webRequest: NativeWebRequest, binderFactory: WebDataBinderFactory?): CurrentUser = resolveArgument(parameter.parameterType, webRequest.getNativeRequest(HttpServletRequest::class.java)!!)
+                override fun resolveArgument(parameter: MethodParameter, mavContainer: ModelAndViewContainer?, webRequest: NativeWebRequest, binderFactory: WebDataBinderFactory?): CurrentUser{
+                    val result = resolveArgument(webRequest.getNativeRequest(HttpServletRequest::class.java)!!)
+                    val service = SpringContextHolder.getBean(UserServiceI::class.java)
+                    println("================${service.getRole()}")
+                    return result
+                }
 
-                private fun resolveArgument(parameterType: Class<*>, request: HttpServletRequest): CurrentUser {
+                private fun resolveArgument(request: HttpServletRequest): CurrentUser {
                     val map = (request.getUserPrincipal() as OAuth2Authentication).userAuthentication.details as Map<String, Any>
                     return CurrentUser(map.get("username") as String,
                             map.get("authorities") as List<GrantedAuthority>,
