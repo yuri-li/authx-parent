@@ -14,8 +14,10 @@ class UserInfoController {
     val log = LogFactory.getLog(this.javaClass)
     @RequestMapping(value = ["/userInfo"], method = [RequestMethod.GET])
     @PreAuthorize("#oauth2.hasScope('user_info')")
-    fun getUser(@ApiIgnore @AuthenticationPrincipal user: CustomUser.Load): CustomUser.Load {
-        log.info("current user details:${user}")
+    fun getUser(@ApiIgnore @AuthenticationPrincipal user: CustomUser.Load?): CustomUser.Load {
+        if(user == null){
+            throw RuntimeException("Please use the user's token, not client's token")
+        }
         return user
     }
 }
