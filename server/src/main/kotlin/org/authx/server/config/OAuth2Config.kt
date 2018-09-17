@@ -1,7 +1,9 @@
 package org.authx.server.config
 
+import org.authx.server.dao.CustomAuthenticationManager
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.context.annotation.Primary
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
@@ -12,7 +14,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 
 @Configuration
 @EnableAuthorizationServer
-class OAuth2Config(val passwordEncoder: PasswordEncoder, val authenticationConfiguration: AuthenticationConfiguration) : AuthorizationServerConfigurerAdapter() {
+class OAuth2Config(val passwordEncoder: PasswordEncoder) : AuthorizationServerConfigurerAdapter() {
     override fun configure(security: AuthorizationServerSecurityConfigurer) {
         security
                 .tokenKeyAccess("permitAll()") //允许访问
@@ -32,6 +34,10 @@ class OAuth2Config(val passwordEncoder: PasswordEncoder, val authenticationConfi
     }
 
     override fun configure(endpoints: AuthorizationServerEndpointsConfigurer) {
-        endpoints.authenticationManager(authenticationConfiguration.authenticationManager)
+        endpoints.authenticationManager(authenticationManager())
     }
+
+    @Bean
+    @Primary
+    fun authenticationManager() = CustomAuthenticationManager(passwordEncoder)
 }

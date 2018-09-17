@@ -1,40 +1,43 @@
 package org.authx.server.dao
 
+import org.apache.commons.logging.LogFactory
 import org.authx.common.model.CustomUser
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.SpringSecurityMessageSource
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception
-import org.springframework.stereotype.Repository
 import javax.validation.Validation
 
 
-@Repository
-class CustomUserDetailsAuthenticationProvider(val passwordEncoder: PasswordEncoder) : AbstractUserDetailsAuthenticationProvider() {
-    override fun retrieveUser(username: String, authentication: UsernamePasswordAuthenticationToken): UserDetails {
+class CustomAuthenticationManager(val passwordEncoder: PasswordEncoder) : AuthenticationManager {
+    val log = LogFactory.getLog(this.javaClass)
+    val messages = SpringSecurityMessageSource.getAccessor()
+
+    override fun authenticate(authentication: Authentication): Authentication {
         val auth = authentication.toCustom()
         val userDetails = loadUserDetails(auth)
         val presentedPassword = auth.password
         val encodedPassword = userDetails.password
 
         if (!passwordEncoder.matches(presentedPassword, encodedPassword)) {
-            logger.debug("Authentication failed: password does not match stored value")
+            log.debug("Authentication failed: password does not match stored value")
             throw BadCredentialsException(
                     messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"))
         }
-        return userDetails.copy(password = null)
+        return UsernamePasswordAuthenticationToken(
+                userDetails.copy(password = null), null,
+                userDetails.authorities)
     }
 
-    override fun additionalAuthenticationChecks(userDetails: UserDetails, authentication: UsernamePasswordAuthenticationToken) {}
-
-    private fun UsernamePasswordAuthenticationToken.toCustom(): CustomUser.Login {
+    private fun Authentication.toCustom(): CustomUser.Login {
         val details = this.details as LinkedHashMap<String, Any>
         val auth = CustomUser.Login(
-                this.principal.toString(),
+                this.name,
                 this.credentials.toString(),
                 details.get("realm").toString(),
                 details.get("domain").toString(),
@@ -57,9 +60,10 @@ class CustomUserDetailsAuthenticationProvider(val passwordEncoder: PasswordEncod
     private fun loadUserDetails(authentication: CustomUser.Login): CustomUser.Load =
             if ("user".equals(authentication.username)) {
                 CustomUser.Load(username = authentication.username, password = passwordEncoder.encode("123456"), authorities = listOf(SimpleGrantedAuthority("ROLE_USER")), email = "163@qq.com", realm = "CP")
-            }else if ("admin".equals(authentication.username)) {
+            } else if ("admin".equals(authentication.username)) {
                 CustomUser.Load(username = authentication.username, password = passwordEncoder.encode("123456"), authorities = listOf(SimpleGrantedAuthority("ROLE_USER")), email = "163@qq.com", realm = "CP")
             } else {
                 throw UsernameNotFoundException(authentication.toString())
             }
+
 }

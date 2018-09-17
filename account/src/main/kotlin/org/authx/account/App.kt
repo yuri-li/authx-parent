@@ -1,8 +1,8 @@
 package org.authx.account
 
-import org.authx.account.config.SpringContextHolder
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.apache.commons.logging.LogFactory
 import org.authx.account.controller.OauthClient
-import org.authx.account.service.UserServiceI
 import org.authx.common.model.CurrentUser
 import org.authx.common.util.Extensions.openUrl
 import org.springframework.boot.SpringApplication
@@ -29,7 +29,9 @@ fun main(args: Array<String>) {
 
 @SpringBootApplication(exclude = [UserDetailsServiceAutoConfiguration::class]) //去掉默认设置的user & password
 @EnableFeignClients(clients = [OauthClient::class])
-class AccountConfig {
+class AccountConfig(val mapper: ObjectMapper) {
+    val log = LogFactory.getLog(this.javaClass)
+
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
@@ -39,15 +41,15 @@ class AccountConfig {
             argumentResolvers.add(object : HandlerMethodArgumentResolver {
                 override fun supportsParameter(parameter: MethodParameter): Boolean = (CurrentUser::class.java == parameter.parameterType)
 
-                override fun resolveArgument(parameter: MethodParameter, mavContainer: ModelAndViewContainer?, webRequest: NativeWebRequest, binderFactory: WebDataBinderFactory?): CurrentUser{
+                override fun resolveArgument(parameter: MethodParameter, mavContainer: ModelAndViewContainer?, webRequest: NativeWebRequest, binderFactory: WebDataBinderFactory?): CurrentUser {
                     val result = resolveArgument(webRequest.getNativeRequest(HttpServletRequest::class.java)!!)
-                    val service = SpringContextHolder.getBean(UserServiceI::class.java)
-                    println("================${service.getRole()}")
                     return result
                 }
 
                 private fun resolveArgument(request: HttpServletRequest): CurrentUser {
-                    val map = (request.getUserPrincipal() as OAuth2Authentication).userAuthentication.details as Map<String, Any>
+                    val authentication = request.getUserPrincipal() as OAuth2Authentication
+                    log.warn("authentication json : ${mapper.writeValueAsString(authentication)}")
+                    val map = authentication.userAuthentication.details as Map<String, Any>
                     return CurrentUser(map.get("username") as String,
                             map.get("authorities") as List<GrantedAuthority>,
                             map.get("enabled") as Boolean,
