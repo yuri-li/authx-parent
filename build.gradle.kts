@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     val kotlinV = "1.2.60"
-    val springbootV = "2.0.4.RELEASE"
+    val springbootV = "2.0.5.RELEASE"
     val springDepV = "1.0.6.RELEASE"
     val ideaExtV = "0.4.2"
 

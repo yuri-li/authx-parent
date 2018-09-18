@@ -1,6 +1,10 @@
 spring:
   application:
     name: authx-server
+  cache:
+    type: CAFFEINE
+    caffeine:
+      spec: maximumSize=10000,expireAfterWrite=3d
 
 server:
   port: 8082

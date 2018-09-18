@@ -2,6 +2,7 @@ package org.authx.server
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -15,6 +16,7 @@ fun main(args: Array<String>) {
 }
 
 @SpringBootApplication
+@EnableCaching
 class AuthxServerConfig {
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()

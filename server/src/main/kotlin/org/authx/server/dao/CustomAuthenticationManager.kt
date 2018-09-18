@@ -29,9 +29,11 @@ class CustomAuthenticationManager(val passwordEncoder: PasswordEncoder) : Authen
             throw BadCredentialsException(
                     messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"))
         }
-        return UsernamePasswordAuthenticationToken(
+        val result = UsernamePasswordAuthenticationToken(
                 userDetails.copy(password = null), null,
-                userDetails.authorities)
+                emptyList())
+        result.details = null
+        return result
     }
 
     private fun Authentication.toCustom(): CustomUser.Login {
