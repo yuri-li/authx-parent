@@ -40,14 +40,4 @@ class ResourceConfig : ResourceServerConfigurerAdapter() {
                 .csrf().disable() //关闭CSRF
                 .httpBasic().disable() // 关闭httpBasic
     }
-
-/*    override fun configure(resources: ResourceServerSecurityConfigurer) {
-        super.configure(resources)
-    }*/
-
-    /*@Bean
-    fun oAuth2FeignRequestInterceptor(): OAuth2FeignRequestInterceptor {
-        val context = DefaultOAuth2ClientContext(DefaultAccessTokenRequest())
-        return OAuth2FeignRequestInterceptor(context, clientCredentialsResourceDetails)
-    }*/
 }

@@ -20,6 +20,8 @@ typora-root-url: images
 
 - 资源 ：后端提供的接口、网页、图片、文件等，都是资源
 
+
+
 # 2 为什么使用RBAC模型
 
 > 尤其是角色。为什么要有角色？
@@ -64,3 +66,65 @@ typora-root-url: images
 
 - 层级和角色，都可以抽象为“角色”
 - 在流程中，不能把“公文”看做“资源”，节点才是
+
+# 6 权限验证
+
+判断用户（编号：U001）是否能查看项目（编号：P001）的报表
+
+## 6.1 权限配置
+
+| user | role        | resource |
+| ---- | ----------- | -------- |
+| U001 | READ_REPORT | P001     |
+
+
+
+## 6.2 基于角色的验证
+
+```
+	@RequestMapping(value = ["/report/{reportId}"], method = [RequestMethod.GET])
+    @PreAuthorize("hasRole('READ_REPORT')")
+    fun readReport(@ApiIgnore @AuthenticationPrincipal user: CurrentUser,
+    	@RequestParam("reportId") reportId:String
+    ): Report {
+        ...
+    }
+```
+
+- @ApiIgnore。指示swagger开放的接口，忽略这个参数
+- @AuthenticationPrincipal
+  - 首先，访问这个接口必须传入user token
+  - 其次，spring会将authentication自动注入当前变量
+- CurrentUser。自定义的model
+
+|      | 描述                                                         |
+| ---- | ------------------------------------------------------------ |
+| 缺点 | annotation也是硬编码<br/>只能判断角色，并不能判断P001是否允许U001访问 |
+| 优点 | 权限都写死在代码里了，用户不需要再单独配置，简单！网上可以找到很多示例 |
+
+## 6.3 基于语义的验证
+
+```
+@RequestMapping(value = ["/report/{reportId}"], method = [RequestMethod.GET])
+    fun readReport(@ApiIgnore @AuthenticationPrincipal user: CurrentUser,
+    	@RequestParam("reportId") reportId:String
+    ): Report {
+        if(user.resources.contains(reportId)){
+            //返回报表的数据
+        }else{
+            //提示用户，没有权限
+        }
+    }
+```
+
+- `user.resources` 。不能直接给user挂载resource，但是，挂载完成后，可以直接获取
+- `contains(reportId)` 。只是演示。实际情况，语义更复杂些
+  - 根据reportId，查找这个报表属于哪个项目。根据项目Id，查找负责人
+  - 项目负责人与U001的关系，从而，判断，是否有权限
+
+## 6.4 总结
+
+建议：使用基于语义的验证 + spring的AOP 或 interceptor，将权限做成可配置的
+
+
+
