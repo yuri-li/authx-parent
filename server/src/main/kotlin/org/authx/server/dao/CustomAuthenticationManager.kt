@@ -63,7 +63,7 @@ class CustomAuthenticationManager(val passwordEncoder: PasswordEncoder) : Authen
             if ("user".equals(authentication.username)) {
                 CustomUser.Load(username = authentication.username, password = passwordEncoder.encode("123456"), authorities = listOf(SimpleGrantedAuthority("ROLE_USER")), email = "163@qq.com", realm = "CP")
             } else if ("admin".equals(authentication.username)) {
-                CustomUser.Load(username = authentication.username, password = passwordEncoder.encode("123456"), authorities = listOf(SimpleGrantedAuthority("ROLE_USER")), email = "163@qq.com", realm = "CP")
+                CustomUser.Load(username = authentication.username, password = passwordEncoder.encode("123456"), authorities = listOf(SimpleGrantedAuthority("ROLE_ADMIN")), email = "163@qq.com", realm = "LP")
             } else {
                 throw UsernameNotFoundException(authentication.toString())
             }

@@ -1,6 +1,7 @@
 package org.authx.account.config
 
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client
@@ -10,12 +11,13 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 @Configuration
 @EnableResourceServer
 @EnableOAuth2Client
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 class ResourceConfig : ResourceServerConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests()
                 .antMatchers(
                         "/login",
-                        "/authx/oauth/token",
+                        "/authx/oauth/token", //auth-server的url
                         //swagger2
                         "/swagger-ui.html/**",
                         "/webjars/springfox-swagger-ui/**",

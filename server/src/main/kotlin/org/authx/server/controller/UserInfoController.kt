@@ -24,38 +24,4 @@ class UserInfoController {
         }
         return user
     }
-
-    @GetMapping("/findUser/{username}")
-    @Cacheable(cacheNames = ["user"], key = "#username")
-    fun findUser(@PathVariable("username") username: String): CurrentUser {
-        log.info("findUser ${username}")
-        return if ("user".equals(username)) {
-            CurrentUser(username = username, authorities = listOf(SimpleGrantedAuthority("ROLE_USER")), email = "163@qq.com", realm = "CP")
-        } else if ("admin".equals(username)) {
-            CurrentUser(username = username, authorities = listOf(SimpleGrantedAuthority("ROLE_USER")), email = "163@qq.com", realm = "CP")
-        } else {
-            throw UsernameNotFoundException(username)
-        }
-    }
-
-    @DeleteMapping("/delUser/{username}")
-    @CacheEvict(cacheNames = ["user", "account"], key = "#username")
-    fun delUser(@PathVariable("username") username: String) {
-        log.info("delUser ${username}")
-    }
-
-    @GetMapping("/findAccount/{username}")
-    @Cacheable(cacheNames = ["account"], key = "#username")
-    fun findAccount(@PathVariable("username") username: String): String {
-        log.info("findAccount ${username}")
-
-        return if ("user".equals(username)) {
-            "user account 001"
-        } else if ("admin".equals(username)) {
-            "user account 002"
-        } else {
-            throw UsernameNotFoundException(username)
-        }
-    }
-
 }
