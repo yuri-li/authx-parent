@@ -33,20 +33,20 @@ class CustomController(val oauthClient: OauthClient, val clientCredentialsResour
     }
 
     @GetMapping("/findUser/{username}")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    fun findUser(@ApiIgnore authentication: CurrentUser, @PathVariable("username") username: String){
+    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
+    fun findUser(@ApiIgnore authentication: CurrentUser, @PathVariable username: String){
         log.info("find user by username:${username}")
     }
 
     @DeleteMapping("/delUser/{username}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    fun delUser(@ApiIgnore authentication: CurrentUser, @PathVariable("username") username: String) {
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    fun delUser(@ApiIgnore authentication: CurrentUser, @PathVariable username: String) {
         log.info("delUser ${username}")
     }
 
     @GetMapping("/findAccount/{username}")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    fun findAccount(@ApiIgnore authentication: CurrentUser, @PathVariable("username") username: String){
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    fun findAccount(@ApiIgnore authentication: CurrentUser, @PathVariable username: String){
         log.info("find account by username:${username}")
     }
 }
