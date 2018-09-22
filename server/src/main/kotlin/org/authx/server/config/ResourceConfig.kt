@@ -12,10 +12,6 @@ class ResourceConfig : ResourceServerConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests()
                 .antMatchers(
-                        "/findUser/**",
-                        "/delUser/**",
-                        "/findAccount/**",
-
                         //swagger2
                         "/swagger-ui.html/**",
                         "/webjars/springfox-swagger-ui/**",

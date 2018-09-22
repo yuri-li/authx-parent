@@ -1,3 +1,8 @@
+server:
+  port: 8082
+  servlet:
+    contextPath: /authx-server
+
 spring:
   application:
     name: authx-server
@@ -6,7 +11,8 @@ spring:
     caffeine:
       spec: maximumSize=10000,expireAfterWrite=3d
 
-server:
-  port: 8082
-  servlet:
-    contextPath: /authx-server
+security:
+  oauth2:
+    client:
+      client-id: account
+      client-secret: 123456

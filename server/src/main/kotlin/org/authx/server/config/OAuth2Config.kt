@@ -1,6 +1,7 @@
 package org.authx.server.config
 
 import org.authx.server.dao.CustomAuthenticationManager
+import org.springframework.boot.autoconfigure.security.oauth2.OAuth2ClientProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -14,7 +15,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 
 @Configuration
 @EnableAuthorizationServer
-class OAuth2Config(val passwordEncoder: PasswordEncoder) : AuthorizationServerConfigurerAdapter() {
+class OAuth2Config(val passwordEncoder: PasswordEncoder,val details: OAuth2ClientProperties) : AuthorizationServerConfigurerAdapter() {
     override fun configure(security: AuthorizationServerSecurityConfigurer) {
         security
                 .tokenKeyAccess("permitAll()") //允许访问
@@ -24,8 +25,8 @@ class OAuth2Config(val passwordEncoder: PasswordEncoder) : AuthorizationServerCo
 
     override fun configure(clients: ClientDetailsServiceConfigurer) {
         clients.inMemory()
-                .withClient("account")
-                .secret(passwordEncoder.encode("123456"))
+                .withClient(details.clientId)
+                .secret(passwordEncoder.encode(details.clientSecret))
                 .authorizedGrantTypes("client_credentials", "password", "refresh_token")
                 .authorities("ROLE_TRUSTED_CLIENT")
                 .scopes("user_info")

@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
 @SpringBootApplication
 class AuthxServerConfig {
     @Bean
-    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder(4)
 
 /*    @Bean
     fun userDetailsService(): UserDetailsService = InMemoryUserDetailsManager(

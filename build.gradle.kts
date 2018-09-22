@@ -59,14 +59,14 @@ subprojects {
     tasks.withType<Test> {
         useJUnitPlatform()
     }
-    if (!"common".equals(project.name)) {
-        apply {
-            plugin("org.springframework.boot")
-            plugin("org.jetbrains.kotlin.plugin.spring")
-            plugin("io.spring.dependency-management")
-            plugin("org.jetbrains.kotlin.plugin.allopen")
-        }
+    apply {
+        plugin("org.springframework.boot")
+        plugin("org.jetbrains.kotlin.plugin.spring")
+        plugin("io.spring.dependency-management")
+        plugin("org.jetbrains.kotlin.plugin.allopen")
+    }
 
+    if (!"common".equals(project.name)) {
         dependencies {
             compile(kotlin("reflect"))
             compile("org.springframework.boot:spring-boot-starter-web") {

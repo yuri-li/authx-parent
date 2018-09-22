@@ -4,9 +4,12 @@ typora-root-url: images
 
 # 1 简介
 
-hasRole的粒度很粗，慎用
+- hasRole。指定允许访问的角色
+- hasAuthority。指定允许访问的资源
 
 # 2 代码
+
+> 场景太简单了，所以，你可以直接替换hasRole为hasAuthority，代码依然可以正常运行。试试看
 
 ```
     @GetMapping("/findUser/{username}")
