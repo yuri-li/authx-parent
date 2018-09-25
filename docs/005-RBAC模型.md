@@ -4,32 +4,12 @@ typora-root-url: images
 
 
 
-# 1 什么是RBAC模型
-
-目的：判断用户能否操作资源
-表现：用户、角色、资源之间的连线
-
-![1536889025557](/1536889025557.png)
-
-- 用户：真实存在的个体（真人）
-
-- 角色
-
-  - 从业务的角度，对用户分组。比如：管理员、代理、会员、游客等；
-  - 从功能的角度，也可以对用户分组，比如：readOnly、write等
-
-- 资源 ：后端提供的接口、网页、图片、文件等，都是资源
-
-
-
-# 2 为什么使用RBAC模型
-
-> 尤其是角色。为什么要有角色？
+# 1 为什么要有角色
 
 
 ![rbac](/rbac.png)
 
-在整个模型里，角色的抽象层次最高：
+角色，很抽象的概念：
 
 | 约束类型   | 释义                                               | 举例                           |
 | ---------- | -------------------------------------------------- | ------------------------------ |
@@ -41,17 +21,33 @@ typora-root-url: images
 | 按顺序演变 |                                                    | 婴儿、儿童、少年...            |
 | 运行时计算 |                                                    | 判断操作员是否资源持有者的上级 |
 
-# 3 组
+# 2 什么是RBAC模型
+
+RBAC：基于角色的权限模型
+
+目的：判断用户能否操作资源
+表现：用户、角色、资源之间的连线
+
+![1536889025557](/1536889025557.png)
+
+- 用户：真实存在的个体（真人）
+- 角色
+  - 从业务的角度，对用户分组。比如：管理员、代理、会员、游客等；
+  - 从功能的角度，也可以对用户分组，比如：readOnly、write等
+- 资源 ：后端提供的接口、网页、图片、文件等，都是资源
+
+# 3 原则
+
+单向设置权限：`user --> role --> resource` 
+
+![1537156778800](/1537156778800.png)
+
+# 4 组
 
 用户组，通常是组织结构，比如，XXX公司XXX部门XXX小组
 角色组，比如，平台服务商、租户、子账号（租户的管理员）、上级、直属上级、下级、直属下级、客户、游客等
 资源组，比如，图片、文档、URL等
 
-# 4 原则
-
-单向设置权限：`user --> role --> resource` 或 `user ⊇ role ⊇ resource`
-
-![1537156778800](/1537156778800.png)
 
 # 5 练习
 
@@ -69,7 +65,22 @@ typora-root-url: images
 
 # 6 权限验证
 
-判断用户（编号：U001）是否能查看项目（编号：P001）的报表
+判断用户是否能查看项目的报表
+
+思考：
+
+1.  配置的资源应该是项目，还是报表？
+2. 查看报表是个接口。这个接口是资源吗？
+
+参考答案：
+
+1. 假设，一个项目有多份报表。配置的粒度，要分情况：
+
+   a) 如果每一份报表都需要管理权限。则，资源是：报表
+
+   b) 如果允许用户查看这个项目所有的报表。则，资源是：项目
+
+2. 接口的属性很多：function name、params、return value、rest path等。而spring 
 
 ## 6.1 权限配置
 
@@ -77,30 +88,36 @@ typora-root-url: images
 | ---- | ----------- | -------- |
 | U001 | READ_REPORT | P001     |
 
-
-
 ## 6.2 基于角色的验证
 
 ```
-	@RequestMapping(value = ["/report/{reportId}"], method = [RequestMethod.GET])
+	@GetMapping("/report/{reportId}")
     @PreAuthorize("hasRole('READ_REPORT')")
-    fun readReport(@ApiIgnore @AuthenticationPrincipal user: CurrentUser,
+    fun readReport(
+      @ApiIgnore @AuthenticationPrincipal user: CurrentUser,
     	@RequestParam("reportId") reportId:String
     ): Report {
         ...
     }
 ```
 
-- @ApiIgnore。指示swagger开放的接口，忽略这个参数
-- @AuthenticationPrincipal
-  - 首先，访问这个接口必须传入user token
-  - 其次，spring会将authentication自动注入当前变量
-- CurrentUser。自定义的model
-
 |      | 描述                                                         |
 | ---- | ------------------------------------------------------------ |
 | 缺点 | annotation也是硬编码<br/>只能判断角色，并不能判断P001是否允许U001访问 |
 | 优点 | 权限都写死在代码里了，用户不需要再单独配置，简单！网上可以找到很多示例 |
+
+
+
+- @ApiIgnore。指示swagger开放的接口，忽略这个参数
+
+- @AuthenticationPrincipal
+
+  - 首先，访问这个接口必须传入user token
+  - 其次，spring会将authentication自动注入当前变量
+
+- CurrentUser。自定义的model
+
+  > spring security 封装的authentication兼容client与resourceOwner。使用的时候，很不方便。所以，
 
 ## 6.3 基于语义的验证
 

@@ -17,6 +17,7 @@ class ResourceConfig : ResourceServerConfigurerAdapter() {
         http.authorizeRequests()
                 .antMatchers(
                         "/login",
+                        "/endpoints",
                         "/authx/oauth/token", //auth-server的url
                         //swagger2
                         "/swagger-ui.html/**",

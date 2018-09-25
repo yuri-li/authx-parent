@@ -65,14 +65,16 @@ subprojects {
         plugin("io.spring.dependency-management")
         plugin("org.jetbrains.kotlin.plugin.allopen")
     }
-
+    dependencies{
+        compile(kotlin("reflect"))
+        compile("org.springframework.boot:spring-boot-starter-web") {
+            exclude(module = "spring-boot-starter-tomcat")
+        }
+        compile("org.springframework.boot:spring-boot-starter-undertow")
+        compile("org.springframework.cloud:spring-cloud-security:2.0.0.RELEASE")
+    }
     if (!"common".equals(project.name)) {
         dependencies {
-            compile(kotlin("reflect"))
-            compile("org.springframework.boot:spring-boot-starter-web") {
-                exclude(module = "spring-boot-starter-tomcat")
-            }
-            compile("org.springframework.boot:spring-boot-starter-undertow")
             compile("com.fasterxml.jackson.module:jackson-module-kotlin")
             compile("net.logstash.logback:logstash-logback-encoder:$logstashV")
 

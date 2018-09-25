@@ -1,20 +1,21 @@
 package org.authx.account.controller
 
+import io.swagger.annotations.Api
 import org.apache.commons.logging.LogFactory
 import org.authx.common.model.CurrentUser
 import org.authx.common.model.CustomUser
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import springfox.documentation.annotations.ApiIgnore
 import javax.validation.Valid
 
 @RestController
-class CustomController(val oauthClient: OauthClient, val clientCredentialsResourceDetails: ClientCredentialsResourceDetails) {
+@Api(tags = ["Custom API"])
+class CustomController(val oauthClient: OauthClient, val clientCredentialsResourceDetails: ClientCredentialsResourceDetails,val mapping: RequestMappingHandlerMapping) {
     val log = LogFactory.getLog(this.javaClass)
 
     @RequestMapping(value = ["/login"], method = [RequestMethod.POST])
@@ -34,7 +35,7 @@ class CustomController(val oauthClient: OauthClient, val clientCredentialsResour
 
     @GetMapping("/findUser/{username}")
     @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
-    fun findUser(@ApiIgnore authentication: CurrentUser, @PathVariable username: String){
+    fun findUser(@ApiIgnore authentication: CurrentUser, @PathVariable username: String) {
         log.info("find user by username:${username}")
     }
 
@@ -45,9 +46,17 @@ class CustomController(val oauthClient: OauthClient, val clientCredentialsResour
     }
 
     @GetMapping("/findAccount/{username}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    fun findAccount(@ApiIgnore authentication: CurrentUser, @PathVariable username: String){
+    @PreAuthorize("hasPermission(#username,'ROLE_USER')")
+    fun findAccount(@ApiIgnore authentication: CurrentUser, @PathVariable username: String) {
         log.info("find account by username:${username}")
+    }
+
+    @GetMapping("/endpoints")
+    fun showAllEndpoints(){
+        mapping.handlerMethods.forEach { t, u ->
+            println("name: ${t.methodsCondition.methods.map { it.name }.joinToString(", ")}")
+        }
+
     }
 }
 
