@@ -2,6 +2,7 @@ package org.authx.account.controller
 
 import io.swagger.annotations.Api
 import org.apache.commons.logging.LogFactory
+import org.authx.account.service.CustomService
 import org.authx.common.model.CurrentUser
 import org.authx.common.model.CustomUser
 import org.springframework.cloud.openfeign.FeignClient
@@ -11,11 +12,16 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import springfox.documentation.annotations.ApiIgnore
+import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
 @RestController
 @Api(tags = ["Custom API"])
-class CustomController(val oauthClient: OauthClient, val clientCredentialsResourceDetails: ClientCredentialsResourceDetails,val mapping: RequestMappingHandlerMapping) {
+class CustomController(
+        val oauthClient: OauthClient,
+        val clientCredentialsResourceDetails: ClientCredentialsResourceDetails,
+        val mapping: RequestMappingHandlerMapping,
+        val customService: CustomService) {
     val log = LogFactory.getLog(this.javaClass)
 
     @RequestMapping(value = ["/login"], method = [RequestMethod.POST])
@@ -46,13 +52,14 @@ class CustomController(val oauthClient: OauthClient, val clientCredentialsResour
     }
 
     @GetMapping("/findAccount/{username}")
-    @PreAuthorize("hasPermission(#username,'ROLE_USER')")
-    fun findAccount(@ApiIgnore authentication: CurrentUser, @PathVariable username: String) {
-        log.info("find account by username:${username}")
+    @PreAuthorize("@customService.hasAccess(#authentication.authorities)")
+//    @PreAuthorize("#authentication.username == #username")
+    fun findAccount(@ApiIgnore authentication: CurrentUser, @ApiIgnore request: HttpServletRequest, @PathVariable username: String) {
+        log.info("find account by username:${username},role:${customService.getRole(request.getAttribute("org.springframework.web.servlet.HandlerMapping.bestMatchingPattern") as String)},method:${request.method}")
     }
 
     @GetMapping("/endpoints")
-    fun showAllEndpoints(){
+    fun showAllEndpoints() {
         mapping.handlerMethods.forEach { t, u ->
             println("name: ${t.methodsCondition.methods.map { it.name }.joinToString(", ")}")
         }

@@ -46,7 +46,7 @@ sealed class CustomUser {
 
 data class CurrentUser(
         val username: String,
-        val authorities: List<GrantedAuthority>,
+        val authorities: List<String>,
         val isEnabled: Boolean = true,
         val isCredentialsNonExpired: Boolean = true, //密码没有过期
         val isAccountNonExpired: Boolean = true, //账号没有过期

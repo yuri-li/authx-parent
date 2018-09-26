@@ -26,7 +26,7 @@ class CurrentUserArgumentResolver : WebMvcConfigurer {
                 val authentication = request.getUserPrincipal() as OAuth2Authentication
                 val map = authentication.userAuthentication.details as Map<String, Any>
                 return CurrentUser(map.get("username") as String,
-                        map.get("authorities") as List<GrantedAuthority>,
+                        (map.get("authorities") as List<LinkedHashMap<String,String>>).map { it.get("authority") as String },
                         map.get("enabled") as Boolean,
                         map.get("credentialsNonExpired") as Boolean,
                         map.get("accountNonExpired") as Boolean,
