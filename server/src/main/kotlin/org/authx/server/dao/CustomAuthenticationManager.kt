@@ -61,9 +61,9 @@ class CustomAuthenticationManager(val passwordEncoder: PasswordEncoder) : Authen
      */
     private fun loadUserDetails(authentication: CustomUser.Login): CustomUser.Load =
             if ("user".equals(authentication.username)) {
-                CustomUser.Load(username = authentication.username, password = passwordEncoder.encode("123456"), authorities = listOf(SimpleGrantedAuthority("ROLE_USER"),SimpleGrantedAuthority("/findAccount/{username}")), email = "163@qq.com", realm = "CP")
+                CustomUser.Load(username = authentication.username, password = passwordEncoder.encode("123456"), authorities =  listOf(SimpleGrantedAuthority("/findAccount/{username}")), email = "163@qq.com", realm = "CP")
             } else if ("admin".equals(authentication.username)) {
-                CustomUser.Load(username = authentication.username, password = passwordEncoder.encode("123456"), authorities = listOf(SimpleGrantedAuthority("ROLE_ADMIN")), email = "163@qq.com", realm = "LP")
+                CustomUser.Load(username = authentication.username, password = passwordEncoder.encode("123456"), authorities = emptyList(), email = "163@qq.com", realm = "LP")
             } else {
                 throw UsernameNotFoundException(authentication.toString())
             }

@@ -10,9 +10,6 @@ security:
     client:
       clientId: account
       clientSecret: 123456
-      grantType: client_credentials
-#      accessTokenUri: http://localhost:8082/authx-server/oauth/token
-#      userAuthorizationUri: http://localhost:8082/authx-server/oauth/authorize
     resource:
       userInfoUri: http://localhost:8082/authx-server/userInfo
 

@@ -44,6 +44,9 @@ allprojects {
         gradleVersion = "4.10"
         distributionType = Wrapper.DistributionType.ALL
     }
+    configurations.all {
+        exclude(mapOf("module" to "spring-boot-starter-tomcat"))
+    }
 }
 
 val spekV = "1.1.5"
@@ -65,13 +68,14 @@ subprojects {
         plugin("io.spring.dependency-management")
         plugin("org.jetbrains.kotlin.plugin.allopen")
     }
-    dependencies{
+    dependencies {
         compile(kotlin("reflect"))
-        compile("org.springframework.boot:spring-boot-starter-web") {
-            exclude(module = "spring-boot-starter-tomcat")
-        }
+        compile("org.springframework.boot:spring-boot-starter-web")
         compile("org.springframework.boot:spring-boot-starter-undertow")
-        compile("org.springframework.cloud:spring-cloud-security:2.0.0.RELEASE")
+        compile("org.springframework.cloud:spring-cloud-security:2.0.0.RELEASE") {
+            exclude(module = "spring-security-oauth2-autoconfigure")
+        }
+        compile("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.0.5.RELEASE")
     }
     if (!"common".equals(project.name)) {
         dependencies {

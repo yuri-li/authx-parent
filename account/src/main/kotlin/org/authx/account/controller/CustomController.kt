@@ -2,7 +2,6 @@ package org.authx.account.controller
 
 import io.swagger.annotations.Api
 import org.apache.commons.logging.LogFactory
-import org.authx.account.service.CustomService
 import org.authx.common.model.CurrentUser
 import org.authx.common.model.CustomUser
 import org.springframework.cloud.openfeign.FeignClient
@@ -12,7 +11,6 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import springfox.documentation.annotations.ApiIgnore
-import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
 @RestController
@@ -20,8 +18,7 @@ import javax.validation.Valid
 class CustomController(
         val oauthClient: OauthClient,
         val clientCredentialsResourceDetails: ClientCredentialsResourceDetails,
-        val mapping: RequestMappingHandlerMapping,
-        val customService: CustomService) {
+        val mapping: RequestMappingHandlerMapping) {
     val log = LogFactory.getLog(this.javaClass)
 
     @RequestMapping(value = ["/login"], method = [RequestMethod.POST])
@@ -52,10 +49,9 @@ class CustomController(
     }
 
     @GetMapping("/findAccount/{username}")
-    @PreAuthorize("@customService.hasAccess(#authentication.authorities)")
-//    @PreAuthorize("#authentication.username == #username")
-    fun findAccount(@ApiIgnore authentication: CurrentUser, @ApiIgnore request: HttpServletRequest, @PathVariable username: String) {
-        log.info("find account by username:${username},role:${customService.getRole(request.getAttribute("org.springframework.web.servlet.HandlerMapping.bestMatchingPattern") as String)},method:${request.method}")
+    @PreAuthorize("@customService.getRole(#username) == 'ROLE_USER' and @customService.hasAccess(#authentication.authorities)")
+    fun findAccount(@ApiIgnore authentication: CurrentUser, @PathVariable username: String) {
+        log.info("find account by username:${username}")
     }
 
     @GetMapping("/endpoints")
@@ -63,7 +59,6 @@ class CustomController(
         mapping.handlerMethods.forEach { t, u ->
             println("name: ${t.methodsCondition.methods.map { it.name }.joinToString(", ")}")
         }
-
     }
 }
 

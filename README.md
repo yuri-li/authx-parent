@@ -32,10 +32,10 @@
 | 摘要认证 | ×    | 实现digest authentication                                    |
 | 扩展登录字段 |   √   |   按自己的需要加载用户的数据（不局限于loadUserByUsername）                                                           |
 |拆分微服务（multiple-project）| √ | 拆分项目：公共的服务/认证服务端/认证客户端                   |
-|simple-RBAC|  | 基于角色的权限控制                                           |
-|role-hierarchy|  | 层级角色：ADMIN > AGENT > USER                               |
-||  |                                                              |
-||  |                                                              |
+|RBAC模型| √ | 介绍RBAC的相关理念。另外，设定一个比较灵活的预设目标 |
+|基于角色的验证| √ | 参考很常见的示例，使用hasRole/hasAuthority设置权限 |
+|基于语义的验证| √ | 抽取一个实战的场景，用代码模拟验证的流程。且，从前端到后端，包括代码，跟权限相关的部分都是可配置的 |
+|本地缓存token| √ | spring security oauth2，token集中存储在auth-server对应的缓存服务器上，当在线用户量很大时，光是交互token与authentication的数据，就会让redis占用全部的带宽。所以，使用本地缓存，缓解redis的压力 |
 ||  |                                                              |
 
 
