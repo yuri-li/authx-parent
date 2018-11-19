@@ -1,15 +1,12 @@
 package org.authx.server.controller
 
 import org.apache.commons.logging.LogFactory
-import org.authx.common.model.CurrentUser
 import org.authx.common.model.CustomUser
-import org.springframework.cache.annotation.CacheEvict
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.UsernameNotFoundException
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RestController
 import springfox.documentation.annotations.ApiIgnore
 
 @RestController

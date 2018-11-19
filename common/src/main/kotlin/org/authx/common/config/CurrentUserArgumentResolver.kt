@@ -2,7 +2,6 @@ package org.authx.common.config
 
 import org.authx.common.model.CurrentUser
 import org.springframework.core.MethodParameter
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest

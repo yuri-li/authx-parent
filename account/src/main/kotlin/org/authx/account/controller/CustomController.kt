@@ -4,9 +4,9 @@ import io.swagger.annotations.Api
 import org.apache.commons.logging.LogFactory
 import org.authx.common.model.CurrentUser
 import org.authx.common.model.CustomUser
+import org.springframework.boot.autoconfigure.security.oauth2.OAuth2ClientProperties
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
@@ -17,7 +17,7 @@ import javax.validation.Valid
 @Api(tags = ["Custom API"])
 class CustomController(
         val oauthClient: OauthClient,
-        val clientCredentialsResourceDetails: ClientCredentialsResourceDetails,
+        val details: OAuth2ClientProperties,
         val mapping: RequestMappingHandlerMapping) {
     val log = LogFactory.getLog(this.javaClass)
 
@@ -31,8 +31,8 @@ class CustomController(
                 "realm" to model.realm,
                 "domain" to model.domain,
                 "email" to model.email,
-                "client_id" to clientCredentialsResourceDetails.clientId,
-                "client_secret" to clientCredentialsResourceDetails.clientSecret
+                "client_id" to details.clientId,
+                "client_secret" to details.clientSecret
         ))
     }
 
